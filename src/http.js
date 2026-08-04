@@ -42,6 +42,17 @@ function parseId(raw) {
   return id;
 }
 
+const MAX_LIMIT = 100;
+
+function parseLimit(raw) {
+  if (raw === null) return undefined;
+  const limit = Number(raw);
+  if (!Number.isInteger(limit) || limit < 1 || limit > MAX_LIMIT) {
+    throw new ValidationError(`limit must be an integer between 1 and ${MAX_LIMIT}`);
+  }
+  return limit;
+}
+
 function parseBoolean(raw) {
   if (raw === null) return undefined;
   if (raw === 'true') return true;
@@ -60,8 +71,8 @@ async function route(req, url) {
         owner: url.searchParams.get('owner') ?? undefined,
         done: parseBoolean(url.searchParams.get('done')),
       });
-      const limit = url.searchParams.get('limit');
-      return { status: 200, body: limit ? tasks.slice(0, limit) : tasks };
+      const limit = parseLimit(url.searchParams.get('limit'));
+      return { status: 200, body: limit === undefined ? tasks : tasks.slice(0, limit) };
     }
     if (req.method === 'POST') {
       const { title, owner } = await readJson(req);
@@ -104,8 +115,9 @@ export function createApp() {
     } catch (error) {
       if (error instanceof ValidationError) return send(res, 400, { error: error.message });
       if (error instanceof NotFoundError) return send(res, 404, { error: error.message });
+      // Never leak internals to the client; the stack stays in the server log.
       console.error(error);
-      return send(res, 500, { error: error.message, stack: error.stack });
+      return send(res, 500, { error: 'internal server error' });
     }
   });
 }

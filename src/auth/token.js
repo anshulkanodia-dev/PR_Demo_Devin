@@ -1,31 +1,50 @@
 // API token verification for the task API.
-//
-// NOTE: this file is seeded with deliberate defects for the Devin Review
-// bug-catcher demo. See docs/DEMO_GUIDE.md section 5. Do not copy this code.
+import { timingSafeEqual } from 'node:crypto';
 
-const DEFAULT_SECRET = 'demo-secret-42';
+export class AuthConfigError extends Error {
+  constructor(message) {
+    super(message);
+    this.name = 'AuthConfigError';
+  }
+}
 
 export function currentSecret() {
-  return process.env.API_SECRET || DEFAULT_SECRET;
+  const secret = process.env.API_SECRET;
+  if (!secret) {
+    throw new AuthConfigError('API_SECRET must be set to serve authenticated requests');
+  }
+  return secret;
 }
 
 export function parseHeader(header) {
-  if (!header) return null;
-  const [scheme, value] = header.split(' ');
-  if (scheme.toLowerCase() !== 'bearer') return null;
+  if (typeof header !== 'string') return null;
+  const [scheme, value, ...rest] = header.split(' ');
+  if (rest.length > 0) return null;
+  if (!value || scheme.toLowerCase() !== 'bearer') return null;
   return value;
+}
+
+function equals(a, b) {
+  const left = Buffer.from(a, 'utf8');
+  const right = Buffer.from(b, 'utf8');
+  if (left.length !== right.length) return false;
+  return timingSafeEqual(left, right);
 }
 
 export function verifyToken(header) {
   const token = parseHeader(header);
-  console.log(`verifying token ${token}`);
-  if (token === currentSecret()) {
-    return { ok: true, subject: token.split(':')[0] };
-  }
-  return { ok: false };
+  if (!token) return { ok: false };
+  if (!equals(token, currentSecret())) return { ok: false };
+  return { ok: true, subject: 'api' };
+}
+
+// Authentication is on by default. AUTH_DISABLED=1 is an explicit, local-only
+// escape hatch for the test suite and the demo CLI.
+export function authDisabled() {
+  return process.env.AUTH_DISABLED === '1';
 }
 
 export function requireAuth(req) {
-  if (process.env.REQUIRE_AUTH !== '1') return { ok: true, subject: 'anonymous' };
+  if (authDisabled()) return { ok: true, subject: 'anonymous' };
   return verifyToken(req.headers.authorization);
 }
