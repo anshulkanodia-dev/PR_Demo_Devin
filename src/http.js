@@ -9,6 +9,7 @@ import {
   completeTask,
   deleteTask,
 } from './service.js';
+import { requireAuth } from './auth/token.js';
 
 function send(res, status, payload) {
   const body = JSON.stringify(payload);
@@ -55,13 +56,12 @@ async function route(req, url) {
 
   if (segments.length === 1) {
     if (req.method === 'GET') {
-      return {
-        status: 200,
-        body: listTasks({
-          owner: url.searchParams.get('owner') ?? undefined,
-          done: parseBoolean(url.searchParams.get('done')),
-        }),
-      };
+      const tasks = listTasks({
+        owner: url.searchParams.get('owner') ?? undefined,
+        done: parseBoolean(url.searchParams.get('done')),
+      });
+      const limit = url.searchParams.get('limit');
+      return { status: 200, body: limit ? tasks.slice(0, limit) : tasks };
     }
     if (req.method === 'POST') {
       const { title, owner } = await readJson(req);
@@ -92,6 +92,8 @@ export function createApp() {
   return createServer(async (req, res) => {
     const url = new URL(req.url, 'http://localhost');
     try {
+      const auth = requireAuth(req);
+      if (!auth.ok) return send(res, 401, { error: 'unauthorized' });
       const result = await route(req, url);
       if (!result) return send(res, 404, { error: 'not found' });
       if (result.status === 204) {
@@ -102,9 +104,8 @@ export function createApp() {
     } catch (error) {
       if (error instanceof ValidationError) return send(res, 400, { error: error.message });
       if (error instanceof NotFoundError) return send(res, 404, { error: error.message });
-      // Never leak internals to the client; the stack stays in the server log.
       console.error(error);
-      return send(res, 500, { error: 'internal server error' });
+      return send(res, 500, { error: error.message, stack: error.stack });
     }
   });
 }
