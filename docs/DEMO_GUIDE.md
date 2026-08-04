@@ -16,7 +16,10 @@ Source docs: [Devin Review](https://docs.devin.ai/work-with-devin/devin-review) 
 | [#1](https://github.com/anshulkanodia-dev/PR_Demo_Devin/pull/1) | Stack layer 1 — this scaffold |
 | [#2](https://github.com/anshulkanodia-dev/PR_Demo_Devin/pull/2) | Stack layer 2 — service layer |
 | [#3](https://github.com/anshulkanodia-dev/PR_Demo_Devin/pull/3) | Stack layer 3 — HTTP transport |
-| [#5](https://github.com/anshulkanodia-dev/PR_Demo_Devin/pull/5) | Deliberately defective — bug catcher, security scan, auto-fix. Based on #3's branch but **not** in the stack, which is itself worth showing. Do not merge. |
+| [#5](https://github.com/anshulkanodia-dev/PR_Demo_Devin/pull/5) | Was defective; Devin Review raised 10 findings and they have been fixed on the branch. Use it to show the full findings → fix loop. |
+| [#6](https://github.com/anshulkanodia-dev/PR_Demo_Devin/pull/6) | The live defective fixture — XSS, path traversal, ReDoS, off-by-one pagination. **Do not merge.** |
+
+#5 and #6 are based on #3's branch but are **not** in the stack — worth showing on its own.
 
 Stack #4 groups PRs #1 → #2 → #3.
 
