@@ -1,0 +1,4 @@
+# Code owners drive the "requested as code owner" shield in Devin Review.
+*                       @anshulkanodia-dev
+/src/auth/              @anshulkanodia-dev
+/.github/workflows/     @anshulkanodia-dev

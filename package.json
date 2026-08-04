@@ -1,0 +1,14 @@
+{
+  "name": "pr-demo-devin",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Sandbox app used to demo Devin's PR workflows (Devin Review, stacked PRs, automations).",
+  "type": "module",
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "lint": "node scripts/lint.mjs",
+    "test": "node --test test/"
+  }
+}
