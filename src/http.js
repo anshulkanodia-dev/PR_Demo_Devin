@@ -74,7 +74,7 @@ async function route(req, url) {
         body: listTasks({
           owner: url.searchParams.get('owner') ?? undefined,
           done: parseBoolean(url.searchParams.get('done')),
-          tag: url.searchParams.get('tag') ?? undefined,
+          tag: url.searchParams.get('tag') || undefined,
         }),
       };
     }
@@ -102,6 +102,7 @@ async function route(req, url) {
 
   if (segments.length === 3 && segments[2] === 'tags' && req.method === 'PUT') {
     const { tags } = await readJson(req);
+    if (!Array.isArray(tags)) throw new ValidationError('tags must be an array');
     return { status: 200, body: retagTask(id, tags) };
   }
 

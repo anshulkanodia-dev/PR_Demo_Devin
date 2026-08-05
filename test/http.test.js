@@ -140,3 +140,33 @@ test('PUT /tasks/:id/tags rejects malformed tags with 400', async () => {
     assert.equal(res.status, 400);
   });
 });
+
+test('GET /tasks ignores an empty tag filter', async () => {
+  await withServer(async (base) => {
+    await fetch(`${base}/tasks`, {
+      method: 'POST',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify({ title: 'a', owner: 'anshul' }),
+    });
+    const res = await fetch(`${base}/tasks?tag=`);
+    assert.equal(res.status, 200);
+    assert.equal((await res.json()).length, 1);
+  });
+});
+
+test('PUT /tasks/:id/tags rejects a body without tags', async () => {
+  await withServer(async (base) => {
+    const task = await fetch(`${base}/tasks`, {
+      method: 'POST',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify({ title: 'a', owner: 'anshul', tags: ['demo'] }),
+    }).then((r) => r.json());
+
+    const res = await fetch(`${base}/tasks/${task.id}/tags`, { method: 'PUT' });
+    assert.equal(res.status, 400);
+    assert.deepEqual(
+      (await fetch(`${base}/tasks/${task.id}`).then((r) => r.json())).tags,
+      ['demo'],
+    );
+  });
+});

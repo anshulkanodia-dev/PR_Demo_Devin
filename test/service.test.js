@@ -102,3 +102,10 @@ test('retagTask throws for a missing task', () => {
   reset();
   assert.throws(() => retagTask(404, ['demo']), NotFoundError);
 });
+
+test('retagTask requires an explicit tag list', () => {
+  reset();
+  const task = createTask({ title: 'a', owner: 'anshul', tags: ['demo'] });
+  assert.throws(() => retagTask(task.id), ValidationError);
+  assert.deepEqual(getTask(task.id).tags, ['demo']);
+});

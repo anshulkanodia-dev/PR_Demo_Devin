@@ -82,6 +82,7 @@ export function renameTask(id, title) {
 }
 
 export function retagTask(id, tags) {
+  if (tags === undefined) throw new ValidationError('tags is required');
   const task = store.update(id, { tags: normaliseTags(tags) });
   if (!task) throw new NotFoundError(id);
   return task;
