@@ -13,12 +13,16 @@ Source docs: [Devin Review](https://docs.devin.ai/work-with-devin/devin-review) 
 
 | PR | Role in the demo |
 | --- | --- |
-| [#1](https://github.com/anshulkanodia-dev/PR_Demo_Devin/pull/1) | Stack layer 1 — this scaffold |
-| [#2](https://github.com/anshulkanodia-dev/PR_Demo_Devin/pull/2) | Stack layer 2 — service layer |
-| [#3](https://github.com/anshulkanodia-dev/PR_Demo_Devin/pull/3) | Stack layer 3 — HTTP transport |
-| [#5](https://github.com/anshulkanodia-dev/PR_Demo_Devin/pull/5) | Deliberately defective — bug catcher, security scan, auto-fix. Based on #3's branch but **not** in the stack, which is itself worth showing. Do not merge. |
+| [#12](https://github.com/anshulkanodia-dev/PR_Demo_Devin/pull/12) | Stack layer 1 — reset to the scaffold state (merged) |
+| [#13](https://github.com/anshulkanodia-dev/PR_Demo_Devin/pull/13) | Stack layer 2 — service layer (merged) |
+| [#14](https://github.com/anshulkanodia-dev/PR_Demo_Devin/pull/14) | Stack layer 3 — HTTP transport (merged) |
+| [#16](https://github.com/anshulkanodia-dev/PR_Demo_Devin/pull/16) | Deliberately defective — bug catcher, security scan, auto-fix. Based on #14's branch but **not** in the stack, which is itself worth showing. Do not merge. |
 
-Stack #4 groups PRs #1 → #2 → #3.
+Stack #15 grouped PRs #12 → #13 → #14; it has been merged bottom-up, so a fresh stack
+needs to be created before demoing the stack UI again (see section 4).
+
+To reset the repo for another run: revert `main` to the scaffold commit, close the open
+fixture PR, delete the stale branches, then recreate the layers and the fixture.
 
 ---
 
