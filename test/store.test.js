@@ -40,3 +40,22 @@ test('remove deletes the task', () => {
   assert.equal(remove(created.id), true);
   assert.equal(get(created.id), null);
 });
+
+test('insert defaults tags to an empty array', () => {
+  reset();
+  assert.deepEqual(insert({ title: 'a', owner: 'anshul' }).tags, []);
+});
+
+test('list filters by tag', () => {
+  reset();
+  insert({ title: 'a', owner: 'anshul', tags: ['demo'] });
+  insert({ title: 'b', owner: 'devin', tags: ['infra'] });
+  assert.deepEqual(list({ tag: 'demo' }).map((t) => t.title), ['a']);
+});
+
+test('tags are copied on read so callers cannot mutate the store', () => {
+  reset();
+  const created = insert({ title: 'a', owner: 'anshul', tags: ['demo'] });
+  get(created.id).tags.push('leaked');
+  assert.deepEqual(get(created.id).tags, ['demo']);
+});
