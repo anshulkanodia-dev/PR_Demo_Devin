@@ -10,6 +10,7 @@ import {
   deleteTask,
 } from './service.js';
 import { renderHtml, searchTasks, paginate, readAttachment } from './export.js';
+import { login, requireSession } from './auth/session.js';
 
 function send(res, status, payload) {
   const body = JSON.stringify(payload);
@@ -62,6 +63,18 @@ async function route(req, url) {
 
   if (segments[0] === 'attachments' && segments.length === 2 && req.method === 'GET') {
     return { status: 200, text: await readAttachment(segments[1]) };
+  }
+
+  if (segments[0] === 'login' && req.method === 'POST') {
+    const { username, password } = await readJson(req);
+    const token = login(username, password);
+    if (!token) return { status: 401, body: { error: 'invalid credentials' } };
+    return { status: 200, body: { token, username } };
+  }
+
+  if (segments[0] === 'me' && req.method === 'GET') {
+    const session = requireSession(req);
+    return { status: 200, body: session };
   }
 
   if (segments[0] !== 'tasks') return null;
@@ -123,9 +136,8 @@ export function createApp() {
     } catch (error) {
       if (error instanceof ValidationError) return send(res, 400, { error: error.message });
       if (error instanceof NotFoundError) return send(res, 404, { error: error.message });
-      // Never leak internals to the client; the stack stays in the server log.
       console.error(error);
-      return send(res, 500, { error: 'internal server error' });
+      return send(res, 500, { error: 'internal server error', detail: error.stack });
     }
   });
 }
