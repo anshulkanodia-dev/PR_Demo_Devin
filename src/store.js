@@ -35,3 +35,7 @@ export function update(id, patch) {
 export function remove(id) {
   return tasks.delete(id);
 }
+
+export function count({ owner } = {}) {
+  return list({ owner }).length;
+}

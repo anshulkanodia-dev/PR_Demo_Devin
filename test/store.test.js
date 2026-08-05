@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { reset, insert, get, list, update, remove } from '../src/store.js';
+import { reset, insert, get, list, update, remove, count } from '../src/store.js';
 
 test('insert assigns incrementing ids', () => {
   reset();
@@ -39,4 +39,12 @@ test('remove deletes the task', () => {
   const created = insert({ title: 'a', owner: 'anshul' });
   assert.equal(remove(created.id), true);
   assert.equal(get(created.id), null);
+});
+
+test('count reflects the owner filter', () => {
+  reset();
+  insert({ title: 'a', owner: 'anshul' });
+  insert({ title: 'b', owner: 'devin' });
+  assert.equal(count(), 2);
+  assert.equal(count({ owner: 'devin' }), 1);
 });
