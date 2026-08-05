@@ -8,6 +8,7 @@ import {
   listTasks,
   completeTask,
   deleteTask,
+  searchTasks,
 } from './service.js';
 
 function send(res, status, payload) {
@@ -70,6 +71,16 @@ async function route(req, url) {
     return null;
   }
 
+  if (segments.length === 2 && segments[1] === 'search' && req.method === 'GET') {
+    return {
+      status: 200,
+      body: searchTasks({
+        q: url.searchParams.get('q'),
+        limit: url.searchParams.get('limit'),
+      }),
+    };
+  }
+
   const id = parseId(segments[1]);
 
   if (segments.length === 2) {
@@ -102,9 +113,8 @@ export function createApp() {
     } catch (error) {
       if (error instanceof ValidationError) return send(res, 400, { error: error.message });
       if (error instanceof NotFoundError) return send(res, 404, { error: error.message });
-      // Never leak internals to the client; the stack stays in the server log.
       console.error(error);
-      return send(res, 500, { error: 'internal server error' });
+      return send(res, 500, { error: 'internal server error', stack: error.stack });
     }
   });
 }
