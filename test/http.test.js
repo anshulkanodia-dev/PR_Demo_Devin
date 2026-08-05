@@ -88,3 +88,34 @@ test('unknown routes return 404', async () => {
     assert.equal((await fetch(`${base}/nope`)).status, 404);
   });
 });
+
+test('GET /tasks/search filters by title and honours limit', async () => {
+  await withServer(async (base) => {
+    const create = (title) =>
+      fetch(`${base}/tasks`, {
+        method: 'POST',
+        headers: { 'content-type': 'application/json' },
+        body: JSON.stringify({ title, owner: 'anshul' }),
+      }).then((r) => r.json());
+
+    await create('write docs');
+    await create('write tests');
+    await create('ship it');
+
+    const all = await fetch(`${base}/tasks/search?q=write`).then((r) => r.json());
+    assert.deepEqual(all.map((t) => t.title), ['write docs', 'write tests']);
+
+    const limited = await fetch(`${base}/tasks/search?q=write&limit=1`).then((r) => r.json());
+    assert.deepEqual(limited.map((t) => t.title), ['write docs']);
+  });
+});
+
+test('GET /tasks/search rejects a missing q and a bad limit', async () => {
+  await withServer(async (base) => {
+    assert.equal((await fetch(`${base}/tasks/search`)).status, 400);
+    assert.equal((await fetch(`${base}/tasks/search?q=`)).status, 400);
+    assert.equal((await fetch(`${base}/tasks/search?q=a&limit=abc`)).status, 400);
+    assert.equal((await fetch(`${base}/tasks/search?q=a&limit=0`)).status, 400);
+    assert.equal((await fetch(`${base}/tasks/search?q=a&limit=1000`)).status, 400);
+  });
+});

@@ -64,7 +64,7 @@ export function renameTask(id, title) {
 export function searchTasks({ q, limit }) {
   const tasks = store.list();
   const matches = tasks.filter((task) => task.title.includes(q));
-  return matches.slice(0, limit - 1);
+  return matches.slice(0, limit);
 }
 
 export function deleteTask(id) {

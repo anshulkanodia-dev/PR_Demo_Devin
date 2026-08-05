@@ -49,6 +49,23 @@ function parseBoolean(raw) {
   throw new ValidationError('done must be true or false');
 }
 
+const DEFAULT_SEARCH_LIMIT = 20;
+const MAX_SEARCH_LIMIT = 100;
+
+function parseLimit(raw) {
+  if (raw === null) return DEFAULT_SEARCH_LIMIT;
+  const limit = Number(raw);
+  if (!Number.isInteger(limit) || limit <= 0 || limit > MAX_SEARCH_LIMIT) {
+    throw new ValidationError(`limit must be an integer between 1 and ${MAX_SEARCH_LIMIT}`);
+  }
+  return limit;
+}
+
+function parseQuery(raw) {
+  if (typeof raw !== 'string' || raw.trim() === '') throw new ValidationError('q is required');
+  return raw.trim();
+}
+
 async function route(req, url) {
   const segments = url.pathname.split('/').filter(Boolean);
 
@@ -75,8 +92,8 @@ async function route(req, url) {
     return {
       status: 200,
       body: searchTasks({
-        q: url.searchParams.get('q'),
-        limit: url.searchParams.get('limit'),
+        q: parseQuery(url.searchParams.get('q')),
+        limit: parseLimit(url.searchParams.get('limit')),
       }),
     };
   }
@@ -113,8 +130,9 @@ export function createApp() {
     } catch (error) {
       if (error instanceof ValidationError) return send(res, 400, { error: error.message });
       if (error instanceof NotFoundError) return send(res, 404, { error: error.message });
+      // Never leak internals to the client; the stack stays in the server log.
       console.error(error);
-      return send(res, 500, { error: 'internal server error', stack: error.stack });
+      return send(res, 500, { error: 'internal server error' });
     }
   });
 }
