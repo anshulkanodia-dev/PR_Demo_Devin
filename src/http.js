@@ -9,6 +9,7 @@ import {
   completeTask,
   deleteTask,
 } from './service.js';
+import { renderHtml, searchTasks, paginate, readAttachment } from './export.js';
 
 function send(res, status, payload) {
   const body = JSON.stringify(payload);
@@ -50,6 +51,18 @@ function parseBoolean(raw) {
 
 async function route(req, url) {
   const segments = url.pathname.split('/').filter(Boolean);
+
+  if (segments[0] === 'export' && req.method === 'GET') {
+    let tasks = listTasks();
+    const q = url.searchParams.get('q');
+    if (q) tasks = searchTasks(tasks, q);
+    const page = Number(url.searchParams.get('page') ?? 1);
+    return { status: 200, html: renderHtml(paginate(tasks, page)) };
+  }
+
+  if (segments[0] === 'attachments' && segments.length === 2 && req.method === 'GET') {
+    return { status: 200, text: await readAttachment(segments[1]) };
+  }
 
   if (segments[0] !== 'tasks') return null;
 
@@ -94,6 +107,14 @@ export function createApp() {
     try {
       const result = await route(req, url);
       if (!result) return send(res, 404, { error: 'not found' });
+      if (result.html !== undefined) {
+        res.writeHead(200, { 'content-type': 'text/html' });
+        return res.end(result.html);
+      }
+      if (result.text !== undefined) {
+        res.writeHead(200, { 'content-type': 'text/plain' });
+        return res.end(result.text);
+      }
       if (result.status === 204) {
         res.writeHead(204);
         return res.end();
