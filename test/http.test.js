@@ -88,3 +88,55 @@ test('unknown routes return 404', async () => {
     assert.equal((await fetch(`${base}/nope`)).status, 404);
   });
 });
+
+test('GET /tasks filters by tag', async () => {
+  await withServer(async (base) => {
+    const create = (title, tags) =>
+      fetch(`${base}/tasks`, {
+        method: 'POST',
+        headers: { 'content-type': 'application/json' },
+        body: JSON.stringify({ title, owner: 'anshul', tags }),
+      }).then((r) => r.json());
+
+    await create('a', ['demo']);
+    await create('b', ['infra']);
+
+    const tagged = await fetch(`${base}/tasks?tag=demo`).then((r) => r.json());
+    assert.deepEqual(tagged.map((t) => t.title), ['a']);
+  });
+});
+
+test('PUT /tasks/:id/tags replaces the tag set', async () => {
+  await withServer(async (base) => {
+    const task = await fetch(`${base}/tasks`, {
+      method: 'POST',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify({ title: 'a', owner: 'anshul', tags: ['demo'] }),
+    }).then((r) => r.json());
+
+    const res = await fetch(`${base}/tasks/${task.id}/tags`, {
+      method: 'PUT',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify({ tags: ['infra', 'infra'] }),
+    });
+    assert.equal(res.status, 200);
+    assert.deepEqual((await res.json()).tags, ['infra']);
+  });
+});
+
+test('PUT /tasks/:id/tags rejects malformed tags with 400', async () => {
+  await withServer(async (base) => {
+    const task = await fetch(`${base}/tasks`, {
+      method: 'POST',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify({ title: 'a', owner: 'anshul' }),
+    }).then((r) => r.json());
+
+    const res = await fetch(`${base}/tasks/${task.id}/tags`, {
+      method: 'PUT',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify({ tags: ['NOT VALID'] }),
+    });
+    assert.equal(res.status, 400);
+  });
+});
