@@ -9,6 +9,7 @@ import {
   listTasks,
   completeTask,
   renameTask,
+  retagTask,
   deleteTask,
 } from '../src/service.js';
 
@@ -60,4 +61,44 @@ test('deleteTask removes the task once', () => {
   const task = createTask({ title: 'a', owner: 'anshul' });
   deleteTask(task.id);
   assert.throws(() => deleteTask(task.id), NotFoundError);
+});
+
+test('createTask lowercases and de-duplicates tags', () => {
+  reset();
+  const task = createTask({ title: 'a', owner: 'anshul', tags: ['Demo', 'demo', 'infra'] });
+  assert.deepEqual(task.tags, ['demo', 'infra']);
+});
+
+test('createTask rejects malformed tags', () => {
+  reset();
+  assert.throws(
+    () => createTask({ title: 'a', owner: 'anshul', tags: ['not a tag'] }),
+    ValidationError,
+  );
+});
+
+test('createTask rejects more than five tags', () => {
+  reset();
+  assert.throws(
+    () => createTask({ title: 'a', owner: 'anshul', tags: ['a', 'b', 'c', 'd', 'e', 'f'] }),
+    ValidationError,
+  );
+});
+
+test('listTasks filters by tag case-insensitively', () => {
+  reset();
+  createTask({ title: 'a', owner: 'anshul', tags: ['demo'] });
+  createTask({ title: 'b', owner: 'anshul', tags: ['infra'] });
+  assert.deepEqual(listTasks({ tag: 'DEMO' }).map((t) => t.title), ['a']);
+});
+
+test('retagTask replaces the tag set', () => {
+  reset();
+  const task = createTask({ title: 'a', owner: 'anshul', tags: ['demo'] });
+  assert.deepEqual(retagTask(task.id, ['infra']).tags, ['infra']);
+});
+
+test('retagTask throws for a missing task', () => {
+  reset();
+  assert.throws(() => retagTask(404, ['demo']), NotFoundError);
 });

@@ -16,6 +16,8 @@ export class NotFoundError extends Error {
 }
 
 const MAX_TITLE_LENGTH = 120;
+const MAX_TAGS = 5;
+const TAG_PATTERN = /^[a-z0-9-]{1,20}$/;
 
 function requireString(value, field) {
   if (typeof value !== 'string' || value.trim() === '') {
@@ -24,13 +26,28 @@ function requireString(value, field) {
   return value.trim();
 }
 
-export function createTask({ title, owner }) {
+function normaliseTags(tags) {
+  if (tags === undefined) return [];
+  if (!Array.isArray(tags)) throw new ValidationError('tags must be an array');
+  const clean = [...new Set(tags.map((tag) => requireString(tag, 'tag').toLowerCase()))];
+  if (clean.length > MAX_TAGS) {
+    throw new ValidationError(`a task may have at most ${MAX_TAGS} tags`);
+  }
+  for (const tag of clean) {
+    if (!TAG_PATTERN.test(tag)) {
+      throw new ValidationError(`invalid tag: ${tag}`);
+    }
+  }
+  return clean;
+}
+
+export function createTask({ title, owner, tags }) {
   const cleanTitle = requireString(title, 'title');
   const cleanOwner = requireString(owner, 'owner');
   if (cleanTitle.length > MAX_TITLE_LENGTH) {
     throw new ValidationError(`title must be at most ${MAX_TITLE_LENGTH} characters`);
   }
-  return store.insert({ title: cleanTitle, owner: cleanOwner });
+  return store.insert({ title: cleanTitle, owner: cleanOwner, tags: normaliseTags(tags) });
 }
 
 export function getTask(id) {
@@ -39,8 +56,11 @@ export function getTask(id) {
   return task;
 }
 
-export function listTasks({ owner, done } = {}) {
-  const tasks = store.list({ owner });
+export function listTasks({ owner, done, tag } = {}) {
+  const tasks = store.list({
+    owner,
+    tag: tag === undefined ? undefined : normaliseTags([tag])[0],
+  });
   if (done === undefined) return tasks;
   return tasks.filter((task) => task.done === done);
 }
@@ -57,6 +77,12 @@ export function renameTask(id, title) {
     throw new ValidationError(`title must be at most ${MAX_TITLE_LENGTH} characters`);
   }
   const task = store.update(id, { title: cleanTitle });
+  if (!task) throw new NotFoundError(id);
+  return task;
+}
+
+export function retagTask(id, tags) {
+  const task = store.update(id, { tags: normaliseTags(tags) });
   if (!task) throw new NotFoundError(id);
   return task;
 }

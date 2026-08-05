@@ -8,28 +8,35 @@ export function reset() {
   tasks.clear();
 }
 
-export function insert({ title, owner, done = false }) {
-  const task = { id: nextId++, title, owner, done };
+export function insert({ title, owner, done = false, tags = [] }) {
+  const task = { id: nextId++, title, owner, done, tags: [...tags] };
   tasks.set(task.id, task);
-  return { ...task };
+  return clone(task);
+}
+
+function clone(task) {
+  return { ...task, tags: [...task.tags] };
 }
 
 export function get(id) {
   const task = tasks.get(id);
-  return task ? { ...task } : null;
+  return task ? clone(task) : null;
 }
 
-export function list({ owner } = {}) {
-  const all = [...tasks.values()].map((task) => ({ ...task }));
-  return owner ? all.filter((task) => task.owner === owner) : all;
+export function list({ owner, tag } = {}) {
+  let all = [...tasks.values()].map(clone);
+  if (owner) all = all.filter((task) => task.owner === owner);
+  if (tag) all = all.filter((task) => task.tags.includes(tag));
+  return all;
 }
 
 export function update(id, patch) {
   const task = tasks.get(id);
   if (!task) return null;
   const updated = { ...task, ...patch, id: task.id };
+  updated.tags = [...(patch.tags ?? task.tags)];
   tasks.set(id, updated);
-  return { ...updated };
+  return clone(updated);
 }
 
 export function remove(id) {

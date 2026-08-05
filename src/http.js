@@ -7,6 +7,7 @@ import {
   getTask,
   listTasks,
   completeTask,
+  retagTask,
   deleteTask,
 } from './service.js';
 import { renderHtml, searchTasks, paginate, readAttachment } from './export.js';
@@ -73,12 +74,13 @@ async function route(req, url) {
         body: listTasks({
           owner: url.searchParams.get('owner') ?? undefined,
           done: parseBoolean(url.searchParams.get('done')),
+          tag: url.searchParams.get('tag') ?? undefined,
         }),
       };
     }
     if (req.method === 'POST') {
-      const { title, owner } = await readJson(req);
-      return { status: 201, body: createTask({ title, owner }) };
+      const { title, owner, tags } = await readJson(req);
+      return { status: 201, body: createTask({ title, owner, tags }) };
     }
     return null;
   }
@@ -96,6 +98,11 @@ async function route(req, url) {
 
   if (segments.length === 3 && segments[2] === 'complete' && req.method === 'POST') {
     return { status: 200, body: completeTask(id) };
+  }
+
+  if (segments.length === 3 && segments[2] === 'tags' && req.method === 'PUT') {
+    const { tags } = await readJson(req);
+    return { status: 200, body: retagTask(id, tags) };
   }
 
   return null;
