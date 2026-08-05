@@ -61,6 +61,12 @@ export function renameTask(id, title) {
   return task;
 }
 
+export function searchTasks({ q, limit }) {
+  const tasks = store.list();
+  const matches = tasks.filter((task) => task.title.includes(q));
+  return matches.slice(0, limit - 1);
+}
+
 export function deleteTask(id) {
   if (!store.remove(id)) throw new NotFoundError(id);
 }

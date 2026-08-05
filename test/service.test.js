@@ -10,6 +10,7 @@ import {
   completeTask,
   renameTask,
   deleteTask,
+  searchTasks,
 } from '../src/service.js';
 
 test('createTask trims and stores the task', () => {
@@ -60,4 +61,13 @@ test('deleteTask removes the task once', () => {
   const task = createTask({ title: 'a', owner: 'anshul' });
   deleteTask(task.id);
   assert.throws(() => deleteTask(task.id), NotFoundError);
+});
+
+test('searchTasks matches on title', () => {
+  reset();
+  createTask({ title: 'write docs', owner: 'anshul' });
+  createTask({ title: 'record demo', owner: 'devin' });
+  createTask({ title: 'write tests', owner: 'devin' });
+  const found = searchTasks({ q: 'write', limit: 3 });
+  assert.equal(found.length, 2);
 });
