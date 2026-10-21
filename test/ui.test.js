@@ -2,7 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { Badge, Button, Card } from '../public/ui/components/index.js';
 import { classNames, escapeHtml } from '../public/ui/lib/html.js';
-import { missingSamples, renderSummary, renderTask, renderTaskList } from '../public/ui/pages/tasks.js';
+import { isPartiallySeeded, missingSamples, renderSummary, renderTask, renderTaskList } from '../public/ui/pages/tasks.js';
 
 test('escapeHtml escapes markup characters', () => {
   assert.equal(escapeHtml('<a href="x">&\'</a>'), '&lt;a href=&quot;x&quot;&gt;&amp;&#39;&lt;/a&gt;');
@@ -56,4 +56,12 @@ test('missingSamples skips samples already on the board', () => {
   const rest = missingSamples([{ id: 1, title: all[0].title, done: false }]);
   assert.deepEqual(rest.map((task) => task.title), all.slice(1).map((task) => task.title));
   assert.equal(missingSamples(all).length, 0);
+});
+
+test('isPartiallySeeded flags boards with only some samples', () => {
+  const samples = missingSamples([]);
+  assert.equal(isPartiallySeeded([]), false);
+  assert.equal(isPartiallySeeded([{ id: 1, title: 'Unrelated', done: false }]), false);
+  assert.equal(isPartiallySeeded([{ id: 1, ...samples[0], done: true }]), true);
+  assert.equal(isPartiallySeeded(samples), false);
 });

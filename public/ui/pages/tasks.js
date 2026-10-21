@@ -56,10 +56,19 @@ export function missingSamples(tasks) {
   return SAMPLE_TASKS.filter((task) => !titles.has(task.title));
 }
 
-async function refresh(error = '', retry = '') {
+// A board holding some, but not all, of the samples was left by an interrupted seed.
+export function isPartiallySeeded(tasks) {
+  const missing = missingSamples(tasks).length;
+  return missing > 0 && missing < SAMPLE_TASKS.length;
+}
+
+async function refresh(error = '') {
   const tasks = await api('/tasks');
-  const retryButton = retry ? ` ${Button({ label: 'Retry', variant: 'secondary', action: retry })}` : '';
-  const notice = error ? `<p class="task-error" role="alert">${escapeHtml(error)}${retryButton}</p>` : '';
+  const resume = isPartiallySeeded(tasks)
+    ? ` ${Button({ label: 'Add missing samples', variant: 'secondary', action: 'seed' })}`
+    : '';
+  const alert = error ? `<p class="task-error" role="alert">${escapeHtml(error)}</p>` : '';
+  const notice = alert + (resume ? `<p class="task-resume">Some sample tasks were not added.${resume}</p>` : '');
   document.getElementById('summary').innerHTML = renderSummary(tasks);
   document.getElementById('tasks').innerHTML = notice + renderTaskList(tasks);
 }
@@ -81,7 +90,6 @@ async function onAction(action) {
   if (busy) return;
   busy = true;
   let error = '';
-  let retry = '';
   try {
     if (action === 'seed') await seed();
     else if (action.startsWith('complete:')) {
@@ -89,10 +97,9 @@ async function onAction(action) {
     }
   } catch (err) {
     error = `Something went wrong: ${err.message}`;
-    retry = action;
   } finally {
     busy = false;
-    await refresh(error, retry);
+    await refresh(error);
   }
 }
 
