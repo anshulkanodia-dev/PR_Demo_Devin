@@ -9,6 +9,6 @@
   },
   "scripts": {
     "lint": "node scripts/lint.mjs",
-    "test": "node --test test/"
+    "test": "node --test test/*.test.js"
   }
 }
