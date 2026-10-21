@@ -178,6 +178,9 @@ function mount(root) {
     menuButton.setAttribute('aria-expanded', String(open));
     menuButton.setAttribute('aria-label', open ? 'Close menu' : 'Open menu');
   };
+  window.matchMedia('(max-width: 768px)').addEventListener('change', (event) => {
+    if (!event.matches) setMenu(false);
+  });
   root.addEventListener('click', (event) => {
     const option = event.target.closest('[data-billing]');
     if (option) setBilling(option.dataset.billing, true);
