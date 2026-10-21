@@ -6,5 +6,5 @@ export function escapeHtml(value) {
 }
 
 export function classNames(...names) {
-  return names.filter(Boolean).join(' ');
+  return escapeHtml(names.filter(Boolean).join(' '));
 }

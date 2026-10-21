@@ -21,7 +21,13 @@ const CONTENT_TYPES = {
 export function resolveStatic(pathname) {
   if (PAGES[pathname]) return join(PUBLIC_DIR, PAGES[pathname]);
   if (!pathname.startsWith('/ui/')) return null;
-  const file = normalize(join(PUBLIC_DIR, decodeURIComponent(pathname)));
+  let decoded;
+  try {
+    decoded = decodeURIComponent(pathname);
+  } catch {
+    return null;
+  }
+  const file = normalize(join(PUBLIC_DIR, decoded));
   if (!file.startsWith(join(PUBLIC_DIR, 'ui') + sep)) return null;
   if (!CONTENT_TYPES[extname(file)]) return null;
   return file;
