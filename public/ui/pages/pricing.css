@@ -700,9 +700,6 @@ a {
     border-radius: 0;
   }
 
-  .compare__hint {
-    display: block;
-  }
 
   .faq {
     grid-template-columns: 1fr;
@@ -736,5 +733,12 @@ a {
     flex-direction: column;
     align-items: center;
     gap: var(--space-2);
+  }
+}
+
+/* Show the swipe hint only once the compare table (min-width 520px) overflows. */
+@media (max-width: 560px) {
+  .compare__hint {
+    display: block;
   }
 }
