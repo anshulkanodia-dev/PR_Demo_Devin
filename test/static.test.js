@@ -58,7 +58,6 @@ test('GET /pricing serves the pricing page', async () => {
     assert.match(await res.text(), /pricing\.js/);
   });
 });
-||||||| 1d22105
 
 test('GET with a malformed escape returns 404, not 500', async () => {
   await withServer(async (base) => {
