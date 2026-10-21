@@ -63,3 +63,10 @@ test('renderPricingPage includes every section in monthly mode by default', () =
   }
   assert.match(html, /data-price="pro">\$29</);
 });
+
+test('renderPricingPage includes a collapsed mobile menu', () => {
+  const html = renderPricingPage();
+  assert.match(html, /class="nav__menu"[^>]*aria-expanded="false" aria-controls="mobile-menu"/);
+  assert.match(html, /<nav class="nav__panel" id="mobile-menu" aria-label="Mobile" hidden>/);
+  assert.doesNotMatch(html, /cta__ghost/);
+});

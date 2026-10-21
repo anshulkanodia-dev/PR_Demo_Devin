@@ -9,6 +9,7 @@ a {
 
 /* Nav */
 .nav {
+  position: relative;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -50,12 +51,6 @@ a {
   gap: var(--space-5);
 }
 
-.nav__actions .btn {
-  height: 38px;
-  padding: 0 var(--space-4);
-  font-size: 14px;
-}
-
 .nav__links [aria-current='page'] {
   color: var(--color-text);
 }
@@ -70,6 +65,39 @@ a {
   border-radius: var(--radius-md);
   background: var(--color-surface);
   color: var(--color-text);
+}
+
+.nav__panel {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  z-index: 10;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  padding: var(--space-3) var(--space-5) var(--space-5);
+  border-bottom: 1px solid var(--color-border);
+  background: var(--color-surface);
+  box-shadow: 0 12px 24px rgba(15, 23, 42, 0.08);
+}
+
+.nav__panel[hidden] {
+  display: none;
+}
+
+.nav__panel a {
+  padding: var(--space-3) 0;
+  font-weight: 500;
+  color: var(--color-text-muted);
+}
+
+.nav__panel [aria-current='page'] {
+  color: var(--color-text);
+}
+
+.nav__panel .btn {
+  margin-top: var(--space-3);
 }
 
 /* Hero */
@@ -340,7 +368,7 @@ a {
   width: 22px;
   height: 22px;
   border-radius: 6px;
-  background: #cbd5e1;
+  background: var(--color-text-inverse-muted);
 }
 
 /* Sections */
@@ -445,7 +473,7 @@ a {
 
 .compare__dash {
   font-weight: 600;
-  color: #cbd5e1;
+  color: var(--color-text-inverse-muted);
 }
 
 .compare__hint {
@@ -515,16 +543,6 @@ a {
   gap: var(--space-3);
 }
 
-.cta__actions .btn--secondary {
-  border-color: transparent;
-  color: var(--color-primary);
-}
-
-.cta__ghost {
-  background: transparent;
-  border-color: rgba(255, 255, 255, 0.35);
-  color: var(--color-on-primary);
-}
 
 .footer {
   display: flex;

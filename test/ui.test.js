@@ -65,3 +65,8 @@ test('isPartiallySeeded flags boards with only some samples', () => {
   assert.equal(isPartiallySeeded([{ id: 1, ...samples[0], done: true }]), true);
   assert.equal(isPartiallySeeded(samples), false);
 });
+
+test('Button renders size and inverse variants', () => {
+  assert.match(Button({ label: 'Go', size: 'sm' }), /class="btn btn--primary btn--sm"/);
+  assert.match(Button({ label: 'Go', variant: 'ghost-inverse' }), /class="btn btn--ghost-inverse"/);
+});

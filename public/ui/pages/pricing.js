@@ -136,8 +136,9 @@ export function renderPricingPage(billing = 'monthly') {
   <header class="nav">
     <a class="nav__logo" href="/"><span class="nav__mark">${CHECK_ICON}</span>Taskly</a>
     <nav class="nav__links" aria-label="Main"><a href="#">Product</a><a href="/pricing" aria-current="page">Pricing</a><a href="#">Customers</a><a href="#">Docs</a></nav>
-    <div class="nav__actions"><a href="#">Sign in</a>${Button({ label: 'Start free' })}</div>
-    <button type="button" class="nav__menu" aria-label="Open menu"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button>
+    <div class="nav__actions"><a href="#">Sign in</a>${Button({ label: 'Start free', size: 'sm' })}</div>
+    <button type="button" class="nav__menu" aria-label="Open menu" aria-expanded="false" aria-controls="mobile-menu"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button>
+    <nav class="nav__panel" id="mobile-menu" aria-label="Mobile" hidden><a href="#">Product</a><a href="/pricing" aria-current="page">Pricing</a><a href="#">Customers</a><a href="#">Docs</a><a href="#">Sign in</a>${Button({ label: 'Start free', fullWidth: true })}</nav>
   </header>
   <main>
     <section class="hero">
@@ -150,7 +151,7 @@ export function renderPricingPage(billing = 'monthly') {
     <section class="logos"><p>Trusted by 4,000+ product teams</p><div class="logos__row">${logos}</div></section>
     <section class="section"><div class="section__head"><h2>Compare plans</h2><p>Every feature, side by side.</p></div>${renderCompareTable()}</section>
     <section class="section"><div class="section__head"><h2>Frequently asked questions</h2></div><div class="faq">${faq}</div></section>
-    <section class="cta"><div><h2>Ready to move faster?</h2><p>Join thousands of teams planning their work in Taskly.</p></div><div class="cta__actions">${Button({ label: 'Start free trial', variant: 'secondary' })}<button type="button" class="btn cta__ghost">Talk to sales</button></div></section>
+    <section class="cta"><div><h2>Ready to move faster?</h2><p>Join thousands of teams planning their work in Taskly.</p></div><div class="cta__actions">${Button({ label: 'Start free trial', variant: 'inverse' })}${Button({ label: 'Talk to sales', variant: 'ghost-inverse' })}</div></section>
   </main>
   <footer class="footer"><span>© 2026 Taskly, Inc.</span><span>Privacy · Terms · Status</span></footer>`;
 }
@@ -170,11 +171,24 @@ function mount(root) {
     root.querySelector('#plans').innerHTML = PLANS.map((plan) => renderPlanCard(plan, billing)).join('');
     if (focus) root.querySelector(`[data-billing="${billing}"]`).focus();
   };
+  const menuButton = root.querySelector('.nav__menu');
+  const menu = root.querySelector('#mobile-menu');
+  const setMenu = (open) => {
+    menu.hidden = !open;
+    menuButton.setAttribute('aria-expanded', String(open));
+    menuButton.setAttribute('aria-label', open ? 'Close menu' : 'Open menu');
+  };
   root.addEventListener('click', (event) => {
     const option = event.target.closest('[data-billing]');
-    if (option) setBilling(option.dataset.billing);
+    if (option) setBilling(option.dataset.billing, true);
+    if (event.target.closest('.nav__menu')) setMenu(menu.hidden);
   });
   root.addEventListener('keydown', (event) => {
+    if (event.key === 'Escape' && !menu.hidden) {
+      setMenu(false);
+      menuButton.focus();
+      return;
+    }
     if (!event.target.closest('[role="radiogroup"]')) return;
     const value = nextBilling(billing, event.key);
     if (value !== billing) {

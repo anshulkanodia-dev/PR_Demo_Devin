@@ -37,6 +37,36 @@
   border-color: #cbd5e1;
 }
 
+.btn--inverse {
+  background: var(--color-surface);
+  color: var(--color-primary);
+}
+
+.btn--inverse:hover {
+  background: var(--color-primary-subtle);
+}
+
+.btn--ghost-inverse {
+  background: transparent;
+  color: var(--color-on-primary);
+  border-color: rgba(255, 255, 255, 0.35);
+}
+
+.btn--ghost-inverse:hover {
+  border-color: var(--color-on-primary);
+}
+
+.btn--ghost-inverse:focus-visible,
+.btn--inverse:focus-visible {
+  outline-color: var(--color-on-primary);
+}
+
+.btn--sm {
+  height: 38px;
+  padding: 0 var(--space-4);
+  font-size: 14px;
+}
+
 .btn--full {
   width: 100%;
 }
