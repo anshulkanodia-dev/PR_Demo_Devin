@@ -67,6 +67,17 @@
   letter-spacing: 0.02em;
 }
 
+.card--inverse {
+  background: var(--color-surface-inverse);
+  border-color: var(--color-surface-inverse);
+  color: var(--color-text-inverse);
+}
+
+.badge--solid {
+  background: var(--color-primary);
+  color: var(--color-on-primary);
+}
+
 .badge--success {
   background: var(--color-success-subtle);
   color: var(--color-success);

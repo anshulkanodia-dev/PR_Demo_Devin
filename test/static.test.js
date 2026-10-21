@@ -49,3 +49,11 @@ test('GET /ui/... serves css with the right content type', async () => {
     assert.equal((await fetch(`${base}/ui/missing.css`)).status, 404);
   });
 });
+
+test('GET /pricing serves the pricing page', async () => {
+  await withServer(async (base) => {
+    const res = await fetch(`${base}/pricing`);
+    assert.equal(res.status, 200);
+    assert.match(await res.text(), /pricing\.js/);
+  });
+});

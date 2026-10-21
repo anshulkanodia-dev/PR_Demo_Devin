@@ -8,6 +8,7 @@ const PUBLIC_DIR = fileURLToPath(new URL('../public/', import.meta.url));
 // Page routes. Add a new page here and its HTML file under public/.
 export const PAGES = {
   '/': 'index.html',
+  '/pricing': 'pricing.html',
 };
 
 const CONTENT_TYPES = {
