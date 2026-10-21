@@ -2,7 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { Badge, Button, Card } from '../public/ui/components/index.js';
 import { classNames, escapeHtml } from '../public/ui/lib/html.js';
-import { renderSummary, renderTask, renderTaskList } from '../public/ui/pages/tasks.js';
+import { missingSamples, renderSummary, renderTask, renderTaskList } from '../public/ui/pages/tasks.js';
 
 test('escapeHtml escapes markup characters', () => {
   assert.equal(escapeHtml('<a href="x">&\'</a>'), '&lt;a href=&quot;x&quot;&gt;&amp;&#39;&lt;/a&gt;');
@@ -48,4 +48,12 @@ test('renderTaskList shows empty state', () => {
 test('Card and Badge escape class values', () => {
   assert.equal(Card({ className: '"><img src=x>' }), '<div class="card &quot;&gt;&lt;img src=x&gt;"></div>');
   assert.doesNotMatch(Badge({ label: 'x', tone: '"><b>' }), /<b>/);
+});
+
+test('missingSamples skips samples already on the board', () => {
+  const all = missingSamples([]);
+  assert.equal(all.length, 3);
+  const rest = missingSamples([{ id: 1, title: all[0].title, done: false }]);
+  assert.deepEqual(rest.map((task) => task.title), all.slice(1).map((task) => task.title));
+  assert.equal(missingSamples(all).length, 0);
 });

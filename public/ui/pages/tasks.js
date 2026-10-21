@@ -51,17 +51,22 @@ async function api(path, options) {
   return res.status === 204 ? null : res.json();
 }
 
-async function refresh(error = '') {
+export function missingSamples(tasks) {
+  const titles = new Set(tasks.map((task) => task.title));
+  return SAMPLE_TASKS.filter((task) => !titles.has(task.title));
+}
+
+async function refresh(error = '', retry = '') {
   const tasks = await api('/tasks');
-  const notice = error ? `<p class="task-error" role="alert">${escapeHtml(error)}</p>` : '';
+  const retryButton = retry ? ` ${Button({ label: 'Retry', variant: 'secondary', action: retry })}` : '';
+  const notice = error ? `<p class="task-error" role="alert">${escapeHtml(error)}${retryButton}</p>` : '';
   document.getElementById('summary').innerHTML = renderSummary(tasks);
   document.getElementById('tasks').innerHTML = notice + renderTaskList(tasks);
 }
 
-// Seeds only an empty board, so repeat clicks never duplicate the samples.
+// Creates only the samples that are not on the board yet, so retries never duplicate them.
 async function seed() {
-  if ((await api('/tasks')).length > 0) return;
-  for (const task of SAMPLE_TASKS) {
+  for (const task of missingSamples(await api('/tasks'))) {
     await api('/tasks', {
       method: 'POST',
       headers: { 'content-type': 'application/json' },
@@ -76,6 +81,7 @@ async function onAction(action) {
   if (busy) return;
   busy = true;
   let error = '';
+  let retry = '';
   try {
     if (action === 'seed') await seed();
     else if (action.startsWith('complete:')) {
@@ -83,9 +89,10 @@ async function onAction(action) {
     }
   } catch (err) {
     error = `Something went wrong: ${err.message}`;
+    retry = action;
   } finally {
     busy = false;
-    await refresh(error);
+    await refresh(error, retry);
   }
 }
 
