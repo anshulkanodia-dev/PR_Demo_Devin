@@ -26,6 +26,7 @@ test('resolveStatic rejects traversal and unknown types', () => {
   assert.equal(resolveStatic('/ui/../../package.json'), null);
   assert.equal(resolveStatic('/ui/%2e%2e/%2e%2e/package.json'), null);
   assert.equal(resolveStatic('/ui/notes.txt'), null);
+  assert.equal(resolveStatic('/ui/%E0%A4%A.css'), null);
 });
 
 test('readStatic returns null for missing files', async () => {
@@ -47,5 +48,11 @@ test('GET /ui/... serves css with the right content type', async () => {
     assert.equal(res.status, 200);
     assert.match(res.headers.get('content-type'), /text\/css/);
     assert.equal((await fetch(`${base}/ui/missing.css`)).status, 404);
+  });
+});
+
+test('GET with a malformed escape returns 404, not 500', async () => {
+  await withServer(async (base) => {
+    assert.equal((await fetch(`${base}/ui/%E0%A4%A.css`)).status, 404);
   });
 });

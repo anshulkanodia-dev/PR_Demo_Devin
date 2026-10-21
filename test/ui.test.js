@@ -44,3 +44,8 @@ test('renderTask escapes user content', () => {
 test('renderTaskList shows empty state', () => {
   assert.match(renderTaskList([]), /No tasks yet/);
 });
+
+test('Card and Badge escape class values', () => {
+  assert.equal(Card({ className: '"><img src=x>' }), '<div class="card &quot;&gt;&lt;img src=x&gt;"></div>');
+  assert.doesNotMatch(Badge({ label: 'x', tone: '"><b>' }), /<b>/);
+});

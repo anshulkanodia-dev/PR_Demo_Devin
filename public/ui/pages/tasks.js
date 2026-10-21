@@ -51,29 +51,45 @@ async function api(path, options) {
   return res.status === 204 ? null : res.json();
 }
 
-async function refresh() {
+async function refresh(error = '') {
   const tasks = await api('/tasks');
+  const notice = error ? `<p class="task-error" role="alert">${escapeHtml(error)}</p>` : '';
   document.getElementById('summary').innerHTML = renderSummary(tasks);
-  document.getElementById('tasks').innerHTML = renderTaskList(tasks);
+  document.getElementById('tasks').innerHTML = notice + renderTaskList(tasks);
 }
 
-async function onAction(action) {
-  if (action === 'seed') {
-    for (const task of SAMPLE_TASKS) {
-      await api('/tasks', {
-        method: 'POST',
-        headers: { 'content-type': 'application/json' },
-        body: JSON.stringify(task),
-      });
-    }
-  } else if (action.startsWith('complete:')) {
-    await api(`/tasks/${action.split(':')[1]}/complete`, { method: 'POST' });
+// Seeds only an empty board, so repeat clicks never duplicate the samples.
+async function seed() {
+  if ((await api('/tasks')).length > 0) return;
+  for (const task of SAMPLE_TASKS) {
+    await api('/tasks', {
+      method: 'POST',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify(task),
+    });
   }
-  await refresh();
+}
+
+let busy = false;
+
+async function onAction(action) {
+  if (busy) return;
+  busy = true;
+  let error = '';
+  try {
+    if (action === 'seed') await seed();
+    else if (action.startsWith('complete:')) {
+      await api(`/tasks/${action.split(':')[1]}/complete`, { method: 'POST' });
+    }
+  } catch (err) {
+    error = `Something went wrong: ${err.message}`;
+  } finally {
+    busy = false;
+    await refresh(error);
+  }
 }
 
 if (typeof document !== 'undefined') {
-  document.getElementById('header-actions').innerHTML = Button({ label: 'Add sample tasks', action: 'seed' });
   document.addEventListener('click', (event) => {
     const target = event.target.closest('[data-action]');
     if (target) onAction(target.dataset.action);

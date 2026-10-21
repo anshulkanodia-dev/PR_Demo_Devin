@@ -38,6 +38,16 @@
   border-top: 1px solid var(--color-border);
 }
 
+.task > :first-child {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.task > .btn,
+.task > .badge {
+  flex-shrink: 0;
+}
+
 .task:first-child {
   border-top: 0;
 }
@@ -58,4 +68,9 @@
     flex-direction: column;
     align-items: flex-start;
   }
+}
+
+.task-error {
+  margin-bottom: var(--space-4);
+  color: #b91c1c;
 }
