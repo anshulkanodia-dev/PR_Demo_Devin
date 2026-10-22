@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import type { ButtonHTMLAttributes, ReactNode } from 'react';
+import type { AnchorHTMLAttributes, ButtonHTMLAttributes, ReactNode } from 'react';
 import { cn } from '@/lib/cn';
 
 export type ButtonVariant = 'primary' | 'secondary';
@@ -15,26 +15,24 @@ const SIZES: Record<ButtonSize, string> = {
   sm: 'h-10 px-4 text-sm',
 };
 
-type ButtonProps = {
+type CommonProps = {
   children: ReactNode;
   variant?: ButtonVariant;
   size?: ButtonSize;
   fullWidth?: boolean;
-  href?: string;
   className?: string;
-} & Omit<ButtonHTMLAttributes<HTMLButtonElement>, 'className' | 'children'>;
+};
 
-export function Button({
-  children,
-  variant = 'primary',
-  size = 'md',
-  fullWidth = false,
-  href,
-  className,
-  type = 'button',
-  ...rest
-}: ButtonProps) {
-  const classes = cn(
+type NativeButtonProps = CommonProps &
+  Omit<ButtonHTMLAttributes<HTMLButtonElement>, 'className' | 'children'> & { href?: undefined };
+
+type LinkButtonProps = CommonProps &
+  Omit<AnchorHTMLAttributes<HTMLAnchorElement>, 'className' | 'children' | 'href'> & { href: string };
+
+export type ButtonProps = NativeButtonProps | LinkButtonProps;
+
+export function buttonClasses({ variant = 'primary', size = 'md', fullWidth = false, className }: Omit<CommonProps, 'children'>) {
+  return cn(
     'inline-flex items-center justify-center gap-2 rounded-md font-semibold transition-colors',
     'focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary',
     VARIANTS[variant],
@@ -42,17 +40,21 @@ export function Button({
     fullWidth && 'w-full',
     className,
   );
+}
 
-  if (href) {
+export function Button(props: ButtonProps) {
+  if (props.href !== undefined) {
+    const { children, variant, size, fullWidth, className, href, ...anchor } = props;
     return (
-      <Link href={href} className={classes}>
+      <Link href={href} {...anchor} className={buttonClasses({ variant, size, fullWidth, className })}>
         {children}
       </Link>
     );
   }
 
+  const { children, variant, size, fullWidth, className, type = 'button', ...button } = props;
   return (
-    <button type={type} className={classes} {...rest}>
+    <button type={type} {...button} className={buttonClasses({ variant, size, fullWidth, className })}>
       {children}
     </button>
   );

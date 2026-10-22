@@ -41,6 +41,7 @@ All three checks must pass before opening or updating a PR.
 - Design tokens: `tailwind.config.ts`, mirroring the Figma "Tokens" variables. Use the token
   classes (`bg-primary`, `text-ink-muted`, `border-line`, ...) and the default spacing scale; never
   hard-code a colour. Add missing tokens to `tailwind.config.ts`.
+- Component and page tests: `test/*.test.tsx` (node:test + `react-dom/server`, run by `npm test`).
 - Run locally: `npm run dev`, then open `http://localhost:3000/`.
 
 ## Automations
