@@ -36,8 +36,9 @@ One-time setup (repo admin):
 1. Go to **Settings → Pages**.
 2. Under **Build and deployment → Source**, choose **GitHub Actions**.
 
-Deploy: every push to `main` deploys automatically. To deploy without a new commit, open
-**Actions → Pages → Run workflow**.
+Deploy: open **Actions → Pages → Run workflow** and run it on `main`. Run it again whenever
+you want to publish newer changes. To deploy on every push instead, add `push: branches: [main]`
+under `on:` in the workflow.
 
 The site is published at:
 

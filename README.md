@@ -59,7 +59,7 @@ test/                 node:test suites
 | `.github/CODEOWNERS` | Code-owner shield in the Devin Review reviewer sidebar |
 | `.github/pull_request_template.md` | PR descriptions |
 | `.github/workflows/ci.yml` | Lint and tests on every PR (per-layer readiness dots on stacked PRs) |
-| `.github/workflows/pages.yml` | Optional GitHub Pages deploy of the pricing page |
+| `.github/workflows/pages.yml` | Manual GitHub Pages deploy of the pricing page |
 | `scripts/trigger-review.sh` | `POST /v3/organizations/{org_id}/pr-reviews` example |
 
 ## Source documentation

@@ -4,9 +4,8 @@ name: Pages
 # The Task Board page (public/index.html) needs the Node API, so the site's
 # landing page is the pricing page instead.
 
+# Manual only, so main stays green while Pages is disabled. See docs/HOSTING.md.
 on:
-  push:
-    branches: [main]
   workflow_dispatch:
 
 permissions:
