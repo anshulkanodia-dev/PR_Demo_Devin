@@ -8,6 +8,7 @@
     "node": ">=20"
   },
   "scripts": {
+    "start": "node -e \"import('./src/http.js').then((m) => m.start())\"",
     "lint": "node scripts/lint.mjs",
     "test": "node --test test/*.test.js"
   }

@@ -51,6 +51,14 @@ test('GET /ui/... serves css with the right content type', async () => {
   });
 });
 
+test('GET /pricing serves the pricing page', async () => {
+  await withServer(async (base) => {
+    const res = await fetch(`${base}/pricing`);
+    assert.equal(res.status, 200);
+    assert.match(await res.text(), /pricing\.js/);
+  });
+});
+
 test('GET with a malformed escape returns 404, not 500', async () => {
   await withServer(async (base) => {
     assert.equal((await fetch(`${base}/ui/%E0%A4%A.css`)).status, 404);

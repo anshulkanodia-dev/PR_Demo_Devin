@@ -12,6 +12,10 @@
   --color-success-subtle: #dcfce7;
   --color-toggle-track: #e9edf3;
   --color-on-primary: #ffffff;
+  --color-surface-inverse: #0f172a;
+  --color-border-inverse: #1e293b;
+  --color-text-inverse: #ffffff;
+  --color-text-inverse-muted: #cbd5e1;
 
   --space-1: 4px;
   --space-2: 8px;
