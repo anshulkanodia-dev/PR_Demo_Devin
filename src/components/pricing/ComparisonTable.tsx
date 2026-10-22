@@ -55,7 +55,7 @@ export function ComparisonTable() {
           <tbody key={group.title}>
             <tr className="h-12">
               <th
-                scope="colgroup"
+                scope="rowgroup"
                 className="border-b border-line-subtle bg-canvas pl-4 pr-3 text-left text-[13px] md:px-6 font-bold uppercase tracking-[0.06em] text-ink-subtle"
               >
                 {group.title}
