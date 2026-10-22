@@ -2,16 +2,19 @@ import Link from 'next/link';
 import type { AnchorHTMLAttributes, ButtonHTMLAttributes, ReactNode } from 'react';
 import { cn } from '@/lib/cn';
 
-export type ButtonVariant = 'primary' | 'secondary';
-export type ButtonSize = 'md' | 'sm';
+export type ButtonVariant = 'primary' | 'secondary' | 'inverse' | 'outline-inverse';
+export type ButtonSize = 'md' | 'base' | 'sm';
 
 const VARIANTS: Record<ButtonVariant, string> = {
   primary: 'bg-primary text-on-primary hover:bg-primary/90',
   secondary: 'border border-line bg-surface text-ink hover:bg-canvas',
+  inverse: 'bg-surface text-primary hover:bg-primary-subtle',
+  'outline-inverse': 'border border-on-primary/35 text-on-primary hover:bg-on-primary/10',
 };
 
 const SIZES: Record<ButtonSize, string> = {
   md: 'h-12 px-6 text-base',
+  base: 'h-11 px-5 text-[15px]',
   sm: 'h-10 px-4 text-sm',
 };
 
