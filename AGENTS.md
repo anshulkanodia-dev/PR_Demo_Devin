@@ -4,14 +4,16 @@ Conventions for Devin (and any other coding agent) working in this repository.
 
 ## Setup
 
-No dependencies to install. Node 20+ is required.
+Node 20+ is required.
 
 ```bash
+npm install
 npm run lint
+npm run typecheck
 npm test
 ```
 
-Both commands must pass before opening or updating a PR.
+All three checks must pass before opening or updating a PR.
 
 ## Branches and PRs
 
@@ -25,20 +27,21 @@ Both commands must pass before opening or updating a PR.
 ## Code style
 
 - ES modules, 2-space indent, single quotes, semicolons.
-- Prefer pure functions; keep I/O at the edges (`src/http.js`, `src/cli.js`).
+- Prefer pure functions; keep I/O at the edges (`src/http.js`).
 - No new runtime dependencies without justification in the PR description.
 
 ## Web UI
 
-- Pages live in `public/` and are served by `src/static.js` (register new routes in `PAGES`).
-- Shared components: `public/ui/components/` (`Button`, `Card`, `Badge`). Reuse them; don't
-  restyle them per page.
-- Design tokens: `public/ui/styles/tokens.css`. Names mirror the Figma variables
-  (`color/primary` -> `--color-primary`). Never hard-code a colour that has a token.
-- Page-specific code: `public/ui/pages/<page>.js` and `<page>.css`. Keep render helpers pure and
-  exported so they can be unit-tested in `test/ui.test.js`.
-- Run locally: `npm start` (or `PORT=4000 npm start`), then open `http://localhost:3000/` and
-  `http://localhost:3000/pricing`.
+- Next.js (App Router) + React + TypeScript + Tailwind CSS. Routes live in `src/app/`
+  (`src/app/<route>/page.tsx`).
+- Shared UI components: `src/components/ui/` (`Button`, `Card`, `Badge`). Reuse them; extend them
+  with a new prop or variant rather than restyling them per page.
+- Layout: `src/components/layout/` (`SiteHeader`, `SiteFooter`) is rendered by `src/app/layout.tsx`
+  on every page.
+- Design tokens: `tailwind.config.ts`, mirroring the Figma "Tokens" variables. Use the token
+  classes (`bg-primary`, `text-ink-muted`, `border-line`, ...) and the default spacing scale; never
+  hard-code a colour. Add missing tokens to `tailwind.config.ts`.
+- Run locally: `npm run dev`, then open `http://localhost:3000/`.
 
 ## Automations
 

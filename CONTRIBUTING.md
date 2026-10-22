@@ -6,8 +6,9 @@ small so that diffs stay readable during a live demo.
 ## Local checks
 
 ```bash
-npm run lint   # syntax check of src/, test/, scripts/
-npm test       # node:test suite
+npm run lint       # ESLint (next/core-web-vitals + TypeScript)
+npm run typecheck  # tsc --noEmit
+npm test           # node:test suite
 ```
 
 ## Layout
@@ -17,8 +18,11 @@ npm test       # node:test suite
 | `src/store.js`        | In-memory persistence (bottom layer)                  |
 | `src/service.js`      | Validation and business rules                         |
 | `src/http.js`         | HTTP transport                                        |
+| `src/app/`            | Next.js routes                                        |
+| `src/components/ui/`  | Shared Button, Card, Badge                            |
+| `tailwind.config.ts`  | Design tokens (mirrors Figma variables)               |
 | `docs/DEMO_GUIDE.md`  | Step-by-step demo script for every Devin PR feature   |
-| `scripts/`            | Lint helper and the Devin Review API trigger example  |
+| `scripts/`            | Devin Review API trigger example                      |
 
 ## Review expectations
 
