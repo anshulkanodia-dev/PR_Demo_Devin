@@ -11,8 +11,7 @@ Requires Node 20+. There are no dependencies to install.
 ```bash
 git clone https://github.com/anshulkanodia-dev/PR_Demo_Devin.git
 cd PR_Demo_Devin
-git checkout devin/1792591031-pricing-page   # until PR #25 is merged
-npm start                                     # PORT=4000 npm start for another port
+npm start        # PORT=4000 npm start for another port
 ```
 
 Then open:
@@ -37,12 +36,8 @@ One-time setup (repo admin):
 1. Go to **Settings → Pages**.
 2. Under **Build and deployment → Source**, choose **GitHub Actions**.
 
-Deploy:
-
-- **After merging to `main`**, every push to `main` deploys automatically.
-- **Before merging**, go to **Settings → Environments → github-pages** and add
-  `devin/1792591031-pricing-page` under **Deployment branches and tags**. Then go to
-  **Actions → Pages → Run workflow**, pick that branch and run it.
+Deploy: every push to `main` deploys automatically. To deploy without a new commit, open
+**Actions → Pages → Run workflow**.
 
 The site is published at:
 

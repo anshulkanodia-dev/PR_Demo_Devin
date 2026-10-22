@@ -10,8 +10,12 @@ a PR for human review.
 
 1. Check that the Figma MCP integration is connected and authorised for the org, and that the
    file below opens.
-2. Start a Devin session on `main`, which must include the web UI scaffold.
-3. Keep the finished run (the pricing PR) open in a tab as a backup.
+2. Start a Devin session on `main`. `main` already contains the finished pricing page (the
+   backup run), so for a live run ask Devin to delete `public/pricing.html`,
+   `public/ui/pages/pricing.*` and `test/pricing.test.js` first, or build the page at a new
+   route such as `/pricing-v2`.
+3. Keep the finished run open in a tab as a backup: `npm start`, then
+   <http://localhost:3000/pricing>, and [PR #25](https://github.com/anshulkanodia-dev/PR_Demo_Devin/pull/25).
 
 ## Assets
 
