@@ -11,6 +11,7 @@ import {
   deleteTask,
 } from './service.js';
 import { renderHtml, searchTasks, paginate, readAttachment } from './export.js';
+import { readStatic } from './static.js';
 
 function send(res, status, payload) {
   const body = JSON.stringify(payload);
@@ -52,6 +53,11 @@ function parseBoolean(raw) {
 
 async function route(req, url) {
   const segments = url.pathname.split('/').filter(Boolean);
+
+  if (req.method === 'GET') {
+    const file = await readStatic(url.pathname);
+    if (file) return { status: 200, file };
+  }
 
   if (segments[0] === 'export' && req.method === 'GET') {
     let tasks = listTasks();
@@ -114,6 +120,10 @@ export function createApp() {
     try {
       const result = await route(req, url);
       if (!result) return send(res, 404, { error: 'not found' });
+      if (result.file !== undefined) {
+        res.writeHead(200, { 'content-type': result.file.contentType });
+        return res.end(result.file.body);
+      }
       if (result.html !== undefined) {
         res.writeHead(200, { 'content-type': 'text/html' });
         return res.end(result.html);
