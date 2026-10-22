@@ -2,14 +2,35 @@
   "name": "pr-demo-devin",
   "version": "0.1.0",
   "private": true,
-  "description": "Sandbox app used to demo Devin's PR workflows (Devin Review, stacked PRs, automations).",
+  "description": "Sandbox app used to demo Devin: PR workflows (Devin Review, stacked PRs, automations) and Figma-to-code.",
   "type": "module",
   "engines": {
     "node": ">=20"
   },
   "scripts": {
-    "start": "node -e \"import('./src/http.js').then((m) => m.start())\"",
-    "lint": "node scripts/lint.mjs",
-    "test": "node --test test/*.test.js"
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "eslint .",
+    "typecheck": "tsc --noEmit",
+    "test": "node --test test/*.test.js",
+    "api": "PORT=4000 node -e \"import('./src/http.js').then((m) => m.start())\""
+  },
+  "dependencies": {
+    "next": "15.5.28",
+    "react": "19.1.10",
+    "react-dom": "19.1.10"
+  },
+  "devDependencies": {
+    "@eslint/eslintrc": "3.3.7",
+    "@types/node": "20.19.43",
+    "@types/react": "19.3.0",
+    "@types/react-dom": "19.3.0",
+    "autoprefixer": "10.6.1",
+    "eslint": "9.39.5",
+    "eslint-config-next": "15.5.28",
+    "postcss": "8.5.31",
+    "tailwindcss": "3.4.19",
+    "typescript": "5.9.3"
   }
 }
