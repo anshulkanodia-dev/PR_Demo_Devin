@@ -7,6 +7,9 @@ authorship, drafts/merge/revert, and the review API.
 **Start here: [`docs/DEMO_GUIDE.md`](docs/DEMO_GUIDE.md)** — one section per question
 from the source Q&A doc, with the exact setting to open or prompt to run.
 
+**Figma-to-code demo:** [`docs/FIGMA_DEMO.md`](docs/FIGMA_DEMO.md). To view the pricing page locally
+or on GitHub Pages, see [`docs/HOSTING.md`](docs/HOSTING.md).
+
 ## The app
 
 A deliberately tiny task tracker, layered so that a change can be split into a stack:

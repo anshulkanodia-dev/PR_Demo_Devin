@@ -134,11 +134,11 @@ export function renderPricingPage(billing = 'monthly') {
   const faq = FAQ.map(([q, a]) => `<div class="faq__item"><h3>${escapeHtml(q)}</h3><p>${escapeHtml(a)}</p></div>`).join('');
   return `
   <header class="nav">
-    <a class="nav__logo" href="/"><span class="nav__mark">${CHECK_ICON}</span>Taskly</a>
-    <nav class="nav__links" aria-label="Main"><a href="#">Product</a><a href="/pricing" aria-current="page">Pricing</a><a href="#">Customers</a><a href="#">Docs</a></nav>
+    <a class="nav__logo" href="./"><span class="nav__mark">${CHECK_ICON}</span>Taskly</a>
+    <nav class="nav__links" aria-label="Main"><a href="#">Product</a><a href="pricing" aria-current="page">Pricing</a><a href="#">Customers</a><a href="#">Docs</a></nav>
     <div class="nav__actions"><a href="#">Sign in</a>${Button({ label: 'Start free', size: 'sm' })}</div>
     <button type="button" class="nav__menu" aria-label="Open menu" aria-expanded="false" aria-controls="mobile-menu"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button>
-    <nav class="nav__panel" id="mobile-menu" aria-label="Mobile" hidden><a href="#">Product</a><a href="/pricing" aria-current="page">Pricing</a><a href="#">Customers</a><a href="#">Docs</a><a href="#">Sign in</a>${Button({ label: 'Start free', fullWidth: true })}</nav>
+    <nav class="nav__panel" id="mobile-menu" aria-label="Mobile" hidden><a href="#">Product</a><a href="pricing" aria-current="page">Pricing</a><a href="#">Customers</a><a href="#">Docs</a><a href="#">Sign in</a>${Button({ label: 'Start free', fullWidth: true })}</nav>
   </header>
   <main>
     <section class="hero">
